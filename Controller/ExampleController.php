@@ -44,8 +44,7 @@ class ExampleController
     
     public function create()
     {
-    
-      
+        return abort(404);
     }   
 
 

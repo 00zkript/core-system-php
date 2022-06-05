@@ -33,7 +33,8 @@ try{
     });
 
     if(empty($findController)){
-        throw new Exception("Error: Name controller not found.");
+        // throw new Exception("Name Controller Not Found.");
+        abort(404);
     }
 
     $arrayDataUri = $dataUri;
@@ -44,25 +45,28 @@ try{
     $pathController = "Controller/".$dirController;
     
     unset($dataUri[$keyController]);
-    $keyMethod  = $keyController +2;
-    $nameMethod = isset($dataUri[$keyController]) && $dataUri[$keyController] != null ? $dataUri[$keyController] : "index";
+    $keyMethod  = array_key_first($dataUri);
+    $nameMethod = isset($dataUri[$keyMethod]) && $dataUri[$keyMethod] != null ? $dataUri[$keyMethod] : "index";
     $nameMethod = explode("?", $nameMethod)[0];
     
     if(!file_exists($pathController)){
-        throw new Exception("Error: Controller nor found.");
+        // throw new Exception("Controller Not Found.");
+        abort(404);
     }
 
     require($pathController);
     
     if(!class_exists($nameController)){
-        throw new Exception("Error: Controller nor found.");
+        // throw new Exception("Controller Not Found.");
+        abort(404);
     }
 
     $controller = new $nameController();
 
     if(!method_exists($controller,$nameMethod)){
-        header('HTTP/1.1 405 Method Not Allowed');
-        throw new Exception("Error: Method Not Allowed");
+        // throw new Exception("Method Not Allowed");
+        abort(405,"Method Not Allowed");
+
     }
 
 
