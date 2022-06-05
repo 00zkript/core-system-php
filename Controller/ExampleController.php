@@ -113,7 +113,7 @@ class ExampleController
     public function update(Request $request)
     {
         $idregistro = $request->input("idregistro");
-        $nombre = $request->input("nombre");
+        $nombre = $request->input("nombreEditar");
     
         try{
             $registro = (new Example)->find($idregistro);
