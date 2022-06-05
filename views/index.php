@@ -62,12 +62,12 @@
 <body class="nav-md">
 <div class=" body">
 
-    <?php include "views/create.php"; ?> 
-    <?php include "views/editar.php"; ?> 
-    <?php include "views/eliminar.php"; ?> 
-    <?php include "views/habilitar.php"; ?> 
-    <?php include "views/inhabilitar.php"; ?> 
-    <?php include "views/ver.php"; ?> 
+    <?php include "crear.php"; ?> 
+    <?php include "editar.php"; ?> 
+    <?php include "eliminar.php"; ?> 
+    <?php include "habilitar.php"; ?> 
+    <?php include "inhabilitar.php"; ?> 
+    <?php include "ver.php"; ?> 
     <div class="main_container">
         <div class="right_col" role="main">
             <div class="container-fluid">
@@ -81,7 +81,7 @@
                                 <form id="frmBuscar" >
                                     <div class="row" id="crud">
                                         <div class="col-12 text-right">
-                                            <button id="btnModalCrear" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i> Nuevo registro</button>
+                                            <button type="button" id="btnModalCrear" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i> Nuevo registro</button>
                                         </div>
 
                                         <div class="col-md-3">
@@ -152,7 +152,8 @@
     const URL_HABILITAR   = "habilitar";
     const URL_INHABILITAR = "inhabilitar";
     const URL_ELIMINAR    = "destroy";
-    const URL_CARPETA     = BASE_URL+"/panel/img/carpeta/";
+    const URL_POSICIONES  = "getPosiciones";
+    const URL_CARPETA     = location.origin+"/cms/_imgs/banner/";
 
 
 
@@ -219,13 +220,13 @@
 
     const modales = () => {
 
-        $(document).on("click","#btnModalCrear", (e) => {
+        $(document).on("click","#btnModalCrear", function(e) {
             e.preventDefault();
             $("#frmCrear span.error").remove();
             $("#frmCrear")[0].reset();
             CKEDITOR.instances.contenido.setData('');
-
-            $("#frmCrear .selectpicker").selectpicker("refresh");
+            getPositions("crear");
+            // $("#frmCrear .selectpicker").selectpicker("refresh");
             $("#modalCrear").modal("show");
 
 
@@ -268,6 +269,8 @@
 
                 $("#nombreEditar").val(data.nombre);
                 CKEDITOR.instances.contenidoEditar.setData(data.contenido);
+                getPositions("editar",data.posicion);
+                
 
 
                 $("#imagenEditar").fileinput('destroy').fileinput({
@@ -285,7 +288,7 @@
 
 
 
-                $("#frmEditar .selectpicker").selectpicker("render");
+                // $("#frmEditar .selectpicker").selectpicker("render");
                 $("#modalEditar").modal("show");
 
             })
@@ -315,12 +318,6 @@
                 if(data.imagen){
                     const img = `<img src="${ URL_CARPETA+data.imagen }" style ="width: 200px;" >`;
                     $("#imagenShow").html(img);
-                }
-
-
-                if(data.pdf){
-                    const pdf = `<a href="${ URL_CARPETA+data.pdf }" target="_blank">Ver PDF</a>`;
-                    $("#pdfShow").html(pdf);
                 }
 
                 if (data.estado){
@@ -462,11 +459,128 @@
         } )
     }
 
+
+        const errorCatch = ( error ) => {
+
+        const response = error.response;
+        const data = response.data;
+
+   
+
+        if (response.status == 500){
+            toastr.error("Error del servidor, contácte con soporte.");
+        }
+
+        if (response.status == 400){
+            mensaje = data.mensaje
+            toastr.error(mensaje);
+
+        }
+
+        console.log(data);
+        return false;
+
+
+    }
+
+        const getPositions = (accion,valorActual = null) => {
+
+        const id = accion == 'editar' ? '#posicionEditar' : '#posicion';
+        const elemento  = document.querySelector(id);
+
+        axios({
+            url : URL_POSICIONES,
+            method : 'get',
+        })
+        .then(response => {
+            const data = response.data;
+            const total = data.total;
+
+            const valorFinal = valorActual == null ? total : valorActual;
+
+            elemento.innerHTML = '';
+            for (let i = 1; i <= total; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.innerHTML = i;
+
+                if(i == valorFinal){
+                    option.selected = true;
+                }
+
+                elemento.appendChild(option);
+            }
+        
+        })
+        .catch(errorCatch)
+        
+
+    }
+
+    const cargando = () => {
+
+        $('body').waitMe({
+            effect : 'bounce',
+            text : '',
+            bg : 'rgba(255,255,255,0.7)',
+            color : '#000',
+            maxSize : '',
+            waitTime : -1,
+            textPos : 'vertical',
+            fontSize : '',
+            source : '',
+            onClose : function() {}
+        });
+
+    }
+
+    const stop = () => {
+
+        $("body").waitMe("hide");
+    }
+
+    const configCkeditor = {
+        filebrowserBrowseUrl : '../ckfinder/ckfinder.html',
+        filebrowserImageBrowseUrl : '../ckfinder/ckfinder.html?type=Images',
+        filebrowserFlashBrowseUrl : '../ckfinder/ckfinder.html?type=Flash',
+        filebrowserUploadUrl : '../ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files',
+        filebrowserImageUploadUrl : '../ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images',
+        filebrowserFlashUploadUrl : '../ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash'
+    };
+    
+
+    const configFileImput = {
+        theme                 : 'fa',
+        language              : 'es',
+        uploadAsync           : false,
+        showUpload            : false,
+        showRemove            : false,
+        allowedFileTypes      : ["image"],
+        // allowedFileExtensions : ['jpg', 'png', 'jpeg','gif','webp','tiff','tif','svg','bmp','mp4',
+        overwriteInitial      : false,
+        initialPreviewAsData  : true,
+        removeFromPreviewOnError  : true,
+        // fileActionSettings    : { showRemove  : false, showUpload  : false, showZoom    : true, showDrag    : false},
+        // dropZoneEnabled:false,
+    }
+
     $("#imagen").fileinput({
         dropZoneTitle : 'Arrastre la imagen aquí',
+        fileActionSettings    : { showRemove  : false, showUpload  : false, showZoom    : true, showDrag    : false},
+        ...configFileImput,
+        // uploadUrl            : "URL de subida",
+        // uploadExtraData      : false,
+        // deleteUrl            : "URL de eliminacion",
+        // deleteExtraData      : false,
     });
     $("#imagenEditar").fileinput({
         dropZoneTitle : 'Arrastre la imagen aquí',
+        fileActionSettings    : { showRemove  : false, showUpload  : false, showZoom    : true, showDrag    : false},
+        ...configFileImput,
+        // uploadUrl            : "URL de subida",
+        // uploadExtraData      : false,
+        // deleteUrl            : "URL de eliminacion",
+        // deleteExtraData      : false,
     });
 
 

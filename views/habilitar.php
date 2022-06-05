@@ -11,7 +11,6 @@
             <div class="modal-body">
                 <form id="frmHabilitar" autocomplete="off">
                     <input type="hidden" name="idregistro" required>
-                    @csrf
                     <div class="row">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <p>¿Esta seguro de <b class="text-success">habilitar</b> este registro?</p>

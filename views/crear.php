@@ -32,7 +32,7 @@
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="form-group">
                                 <label for="contenido">Contenido: <span class="text-danger">(*)</span></label>
-                                <textarea id="contenido" cols="30" rows="10" class="form-control" placeholder="Descripcion"></textarea>
+                                <textarea id="contenido" cols="30" rows="10" class="form-control" placeholder="Contenido"></textarea>
                             </div>
                         </div>
 

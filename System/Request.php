@@ -2,10 +2,18 @@
 
 class Request{
 
-    public $request;
-    public function __construct($request)
+    private $request;
+    private $files;
+
+    public function __construct()
     {   
+        
+        $content = file_get_contents('php://input');
+        $json = $content == '' ? array() : json_decode($content,true);
+        $request = array_merge($_REQUEST,$json);
+
         $this->request = $request;
+        $this->files = $_FILES;
     }
 
     public function __get($key)
@@ -53,6 +61,37 @@ class Request{
     {
         return $this->request;
     }
+
+
+    public function file($key,$default = null)
+    {
+        if(isset($this->files[$key])){
+            $file = $this->files[$key];
+    
+            $file["name"] = "FILE".time().$file["name"];
+            return $file[$key];
+        }else{
+            return $default;
+        }
+    }
+
+    public function fileSize($key)
+    {
+        return $this->files[$key]["size"];
+    }
+
+    public function allFiles()
+    {
+        return $this->files;
+    }
+
+    public function hasFile($key)
+    {
+        return isset($_FILES[$key]) && !empty($_FILES[$key]["tmp_name"]);
+    }
+
+
+
 }
 
 

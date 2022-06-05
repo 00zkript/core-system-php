@@ -6,11 +6,11 @@ function view($view,$data = array())
     foreach ($data as $key =>  $value) {
         $$key = $value;
     }
-    $base = "./";
+    $base = APP_PATH."Views/";
     $nameView = str_replace(".","/",$view).".php";
 
 
-    include( $base.$nameView );
+    require( $base.$nameView );
 }
 
 
@@ -37,4 +37,11 @@ function dd($data)
 }
 
 
-?> 
+function dump_log($data){
+    var_dump($data)."\n";
+}
+
+function dd_log($data){
+    var_dump($data);
+    exit;
+}

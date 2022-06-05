@@ -4,13 +4,9 @@
             <thead class="thead-dark">
                 <tr class="text-center">
                     <th>ID</th>
-                    <th>PROVEEDOR</th>
-                    <th>NRO. COMPROBANTE</th>
-                    <th>TIPO COMPROBANTE</th>
-                    <th>TIPO PAGO</th>
-                    <th>TOTAL</th>
-                    <th>FECHA</th>
-                    <th>USUARIO</th>
+                    <th>NOMBRE</th>
+                    <th>POSICIÓN</th>
+                    <th>ESTADO</th>
                     <th>GESTIONAR</th>
                 </tr>
             </thead>
@@ -19,24 +15,31 @@
                 <?php foreach($registros AS $item): ?>
 
                     <tr>
-                        <td><?= str_pad($item["idcompra"],7,'0000000',STR_PAD_LEFT) ?></td>
-                        <td><?= $item["proveedor"] ?></td>
-                        <td><?= $item["nro_comprobante"] ?></td>
-                        <td><?= $item["tipo_comprobante"] ?></td>
-                        <td><?= $item["tipo_pago"] ?></td>
-                        <td><?= $item["total"] ?> </td>
-                        <td><?= date("d/m/Y",strtotime($item["fecha"])) ?></td>
-                        <td><?= $item["vendedor"] ?> </td>
+                        <td><?= str_pad($item["idregistro"],7,'0000000',STR_PAD_LEFT) ?></td>
+                        <td><?= $item["nombre"] ?></td>
+                        <td><?= $item["posicion"] ?></td>
+                        <td>
+                            <?php if($item["estado"]) : ?>
+                                <label class="badge badge-success">Habilitado</label>
+                            <?php else : ?>
+                                <label class="badge badge-danger">Inhabilitado</label>
+                            <?php endif; ?>
+                        </td>
 
                         <td class="text-center">
                             <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu-<?=$item["idcompra"]?>" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu-<?=$item["idregistro"]?>" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
                                     Seleccione
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenu-<?=$item["idcompra"]?>" data-idcompra="<?=$item["idcompra"]?>">
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu-<?=$item["idregistro"]?>" data-idregistro="<?=$item["idregistro"]?>">
                                     <button class="dropdown-item btnModalVer" type="button"><i class="fa fa-eye"></i> Ver</button>
                                     <button class="dropdown-item btnModalEditar" type="button"><i class="fa fa-pencil"></i> Editar</button>
-                                    <button class="dropdown-item btnModalEliminar" type="button"><i class="fa fa-times"> Eliminar</i></button>
+                                    <?php if($item["estado"] == 1): ?>
+                                        <button class="dropdown-item btnModalInhabilitar" type="button"><i class="fa fa-check"></i> Inhabilitar</button>
+                                    <?php else: ?>
+                                        <button class="dropdown-item btnModalHabilitar" type="button"><i class="fa fa-times"></i> Habilitar</button>
+                                    <?php endif; ?>
+                                    <button class="dropdown-item btnModalEliminar" type="button"><i class="fa fa-trash"> Eliminar</i></button>
                                 </div>
                             </div>
                         </td>

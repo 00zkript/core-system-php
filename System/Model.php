@@ -864,6 +864,17 @@ class Model
         return $this;
     }
 
+    public function when($value, $callback, $default = null)
+    {
+        if ($value) {
+            return $callback($this, $value) ?: $this;
+        } elseif ($default) {
+            return $default($this, $value) ?: $this;
+        }
+
+        return $this;
+    }
+
     public function __get($name)
     {
         if (isset($this->data[$name])) {

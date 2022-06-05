@@ -12,3 +12,6 @@ class Example extends Model
     
 
 }
+
+
+

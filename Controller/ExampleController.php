@@ -1,9 +1,6 @@
 <?php
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ERROR | E_PARSE | E_NOTICE);
 
-include("./System/Model.php");
+
 include("./Models/Example.php");
 
 
@@ -20,7 +17,7 @@ class ExampleController
         $proveedores = (new Example)->where("estado","=","1")->get();
 
     
-        return view("views.index", compact("proveedores"));
+        return view("index", compact("proveedores"));
     }
 
     public function listar(Request $request)
@@ -28,7 +25,7 @@ class ExampleController
 
         $cantidadRegistros  = $request->input("cantidadRegistros");
         $paginaActual       = $request->input("paginaActual");
-        // $txtBuscar          = $request["txtBuscar"];
+        $txtBuscar          = $request->input("txtBuscar");
 
         $data = (new Example)
             ->where("estado","=","1")
@@ -37,7 +34,7 @@ class ExampleController
         $registros = $data["data"];
         $pagination = $data["pagination"];
 
-        return response()->json(view("views.listado",compact("registros","pagination")));
+        return response()->json(view("listado",compact("registros","pagination")));
 
     }
 
@@ -52,9 +49,12 @@ class ExampleController
 
     public function store(Request $request)
     {
-
+        $nombre = $request->input("nombre");
+    
         try{
-
+            $registro = new Example;
+            $registro->nombre = $nombre;
+            $registro->save();
     
             return response()->json(array(
                 "mensaje" => "Se guardo con éxito",
@@ -76,17 +76,46 @@ class ExampleController
     }
     
 
+    public function show(Request $request)
+    {
+        $idregistro = $request->input("idregistro");
+        $registro = (new Example)->find($idregistro)->toArray();
+
+        if(empty($registro)){
+            return response()->json(array(
+                "mensaje" => "No se pudo encontrar el registro."
+            ),400);
+        }
+
+        return response()->json($registro);
+
+    }
 
     public function edit(Request $request)
     {
-        
+        $idregistro = $request->input("idregistro");
+        $registro = (new Example)->find($idregistro)->toArray();
+
+        if(empty($registro)){
+            return response()->json(array(
+                "mensaje" => "No se pudo encontrar el registro."
+            ),400);
+        }
+
+        return response()->json($registro);
+
     }
 
 
     public function update(Request $request)
     {
+        $idregistro = $request->input("idregistro");
+        $nombre = $request->input("nombre");
     
         try{
+            $registro = (new Example)->find($idregistro);
+            $registro->nombre = $nombre;
+            $registro->update();
            
             return response()->json(array(
                 "mensaje" => "Se guardo con éxito",
@@ -113,10 +142,18 @@ class ExampleController
     }
 
 
+    public function getPosiciones(Request $request)
+    {
+        $total = (new Example)->select(["count(*) as total"])->first();
+
+        return response()->json([
+            "total" =>  $total["total"] + 1
+        ]);
+
+    }
+
+
 
 }
 
 
-
-$controller = new ExampleController();
-include "System/Start.php";
