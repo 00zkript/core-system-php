@@ -136,11 +136,78 @@ class ExampleController
 
     }
 
+    public function habilitar(Request $request)
+    {
+        $idregistro = $request->input("idregistro");
+    
+        try{
+            $registro = (new Example)->find($idregistro);
+            $registro->estado = 1;
+            $registro->update();
+           
+            return response()->json(array(
+                "mensaje" => "Se habilito con éxito",
+            ));
+
+        }catch(Exception $e){
+
+
+            return response()->json(array(
+                "mensaje" => "No se pudo habilitar con éxito",
+                "error" => $e->getMessage(),
+                "line" => $e->getLine()
+            ));
+        }
+
+    }
+
+    
+    public function inhabilitar(Request $request)
+    {
+        $idregistro = $request->input("idregistro");
+    
+        try{
+            $registro = (new Example)->find($idregistro);
+            $registro->estado = 0;
+            $registro->update();
+           
+            return response()->json(array(
+                "mensaje" => "Se inhabilito con éxito",
+            ));
+
+        }catch(Exception $e){
+
+
+            return response()->json(array(
+                "mensaje" => "No se pudo inhabilitar con éxito",
+                "error" => $e->getMessage(),
+                "line" => $e->getLine()
+            ));
+        }
+
+    }
+
     public function destroy(Request $request)
     {
+        $idregistro = $request->input("idregistro");
+    
+        try{
+            $registro = (new Example)->find($idregistro);
+            $registro->delete();
+            
+            return response()->json(array(
+                "mensaje" => "El registro se ha eliminado con éxito"
+            ));
+
+        }catch(Exception $e){
 
 
-        return response()->json(array("mensaje" => "El registro se ha eliminado con éxito"));
+            return response()->json(array(
+                "mensaje" => "No se pudo inhabilitar con éxito",
+                "error" => $e->getMessage(),
+                "line" => $e->getLine()
+            ));
+        }
     
     }
 
