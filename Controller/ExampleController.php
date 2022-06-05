@@ -28,6 +28,9 @@ class ExampleController
         $txtBuscar          = $request->input("txtBuscar");
 
         $data = (new Example)
+            ->when(! empty($txtBuscar), function($query) use($txtBuscar) {
+                return $query->where("titulo","like","%$txtBuscar%");
+            })
             ->where("estado","=","1")
             ->paginate($paginaActual,$cantidadRegistros);
 
