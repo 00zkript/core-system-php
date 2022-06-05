@@ -153,7 +153,7 @@
     const URL_INHABILITAR = "inhabilitar";
     const URL_ELIMINAR    = "destroy";
     const URL_POSICIONES  = "getPosiciones";
-    const URL_CARPETA     = location.origin+"/cms/_imgs/banner/";
+    const URL_CARPETA     = location.origin+"/cms/_imgs/ecample/";
 
 
 
