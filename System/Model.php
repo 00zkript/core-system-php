@@ -57,7 +57,7 @@ class Model
 
     public function getConexion()
     {
-        if (!isset($this->cnx)) {
+        if (!isset($this->cnx) || empty($this->cnx)) {
             $this->cnx = $this->initConexion();
         }
 
@@ -648,18 +648,15 @@ class Model
     {
 
         
-        $cx = new self;
-        $cx->server = $this->server;
-        $cx->db = $this->db;
-        $cx->user = $this->user;
-        $cx->pass = $this->pass;
-        $cx->select("COUNT(*) AS total");
-        $cx->table = $this->table;
-        $cx->join = $this->join;
-        $cx->where = $this->where;
-        $cx->groupBy = $this->groupBy;
-        $cx->orderBy = $this->orderBy;
-        $rsTotal = $cx->first();
+        $rsTotal = (new self)
+            ->setConexion($this->server,$this->db,$this->user,$this->pass)
+            ->select("COUNT(*) AS total")
+            ->setTable($this->table)
+            ->setJoin($this->join)
+            ->setWhere($this->where)
+            ->setGroupBy($this->groupBy)
+            ->setOrderBy($this->orderBy)
+            ->first();
         
     
         $totalRegistros =  $rsTotal["total"] ?? 0;
@@ -686,7 +683,7 @@ class Model
         $this->offset($paginaActual);
         $this->limit($cantidadRegistros);
         $result = $this->get();
-
+        
        
 
 
@@ -844,7 +841,7 @@ class Model
 
                 $json = json_encode($value,JSON_FORCE_OBJECT);
                 $values[] = $column." = '$json' ";
-            }else if(empty($value)) {
+            }else if($value === null) {
                 $values[] = $column." = null ";
             } else  {
                 $values[] = $column." = '$value' ";

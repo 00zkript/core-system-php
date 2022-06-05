@@ -12,7 +12,9 @@ try{
     
     // $method = $_REQUEST["action"];
     // $method = basename( $_SERVER["PHP_SELF"] );
-    $method = basename( $_SERVER["REQUEST_URI"] );
+    $ruta = $_SERVER["REQUEST_URI"];
+    $nameMethod = basename( $ruta );
+    $method = explode("?", $nameMethod)[0];
 
     if(method_exists($controller,$method)){
         $content = file_get_contents('php://input');
